@@ -1,0 +1,42 @@
+{
+  "name": "etcd-node-config",
+  "version": "1.0.0",
+  "description": "获取 etcd 配置中心信息注册到环境变量中",
+  "author": "dq",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "test": "mocha",
+    "coverage": "nyc mocha && nyc report --reporter=lcov --reporter=text-summary"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "js-yaml": "^4.1.0",
+    "node-etcd": "^7.0.0"
+  },
+  "keywords": [
+    "etcd",
+    "etcd-node",
+    "node-etcd",
+    "etcd-config",
+    "etcd-node-config"
+  ],
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1981430140/etcd-node-config"
+  },
+  "bugs": {
+    "url": "https://github.com/1981430140/etcd-node-config/issues"
+  },
+  "homepage": "https://github.com/1981430140/etcd-node-config#readme",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^9.2.2",
+    "nyc": "^15.1.0"
+  }
+}
