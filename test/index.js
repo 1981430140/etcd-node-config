@@ -12,7 +12,7 @@ describe('index.js', function () {
     assert.strictEqual(process.env['etcd.test2'], '2');
     assert.strictEqual(process.env['etcd.test.a'], 'a');
     assert.strictEqual(index.getEnv()['etcd.test1'], 1);
-    assert.strictEqual(index.getEnv()['etcd.test2'], 2);
+    assert.strictEqual(index.getEnv()['etcd.test2'], '2');
     assert.strictEqual(index.getEnv(null, true)['test.a'], 'a');
 
     const filePath = __dirname + '/etcd.test.env';

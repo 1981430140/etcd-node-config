@@ -15,9 +15,9 @@ $ npm i etcd-node-config --save
 const { fetchRemoteEtcdConfig } = require('etcd-node-config');
 fetchRemoteEtcdConfig({
   hosts: process.env['ETCD_HOST'] || "127.0.0.1:2379",
-  paths: ['redis', { path: '/db/test_db', type: 'json' }] // // 需要读取 etcd 上的配置目录地址 
+  paths: ['redis', { path: '/db/test_db', name: 'mydb', type: 'json' }] // 需要读取 etcd 上的配置目录地址 
 }).then(env => {
-  console.log("获取 ETCD 数据：", env)
+  console.log("获取 ETCD 数据：", env) // 输出： {redis: ... , mydb: ...}
 })
 ```
 ### 2.启动项目时运行脚本
@@ -120,7 +120,7 @@ console.log(process.env["etcd.config.test"]) // 输出： test01\ntest02  （从
 - `setEnv()` 注入到环境变量
 - `getEnv(filePath, isDelEtcdPrefix)` 获取ETCD配置数据
   - filePath {String}
-  - isDelEtcdPrefix {Boolean}
+  - isDelEtcdPrefix {Boolean} 是否删除etcd前缀
 ## License
 
 [BSD-2-Clause](LICENSE)

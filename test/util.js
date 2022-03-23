@@ -7,13 +7,13 @@ const utils = require('../lib/utils');
 describe('lib/utils.js', function () {
   it('assignConfig', function () {
     const configResult = {};
-    utils.assignConfig(configResult, { key: '/json', value: '{"json":1}' }, 'json')
-    utils.assignConfig(configResult, { key: '/yaml', value: 'yaml: 2\nyaml2: y2' }, 'json')
+    utils.assignConfig(configResult, { key: '/json', value: '{"json":1}' }, { type: 'json' })
+    utils.assignConfig(configResult, { key: '/yaml', value: 'yaml: 2\nyaml2: y2' }, { type: 'json', name: 'testname' })
     utils.assignConfig(configResult, { key: '/ini', value: 'ini=3\nini2 = n3' })
     utils.assignConfig(configResult, { key: '/text', value: 'text' })
     assert.strictEqual(configResult.json, 1);
-    assert.strictEqual(configResult.yaml, 2);
-    assert.strictEqual(configResult.yaml2, 'y2');
+    assert.strictEqual(configResult.testname.yaml, 2);
+    assert.strictEqual(configResult.testname.yaml2, 'y2');
     assert.strictEqual(configResult.ini, '3');
     assert.strictEqual(configResult.ini2, 'n3');
     assert.strictEqual(configResult.text, 'text');
@@ -58,6 +58,11 @@ describe('lib/utils.js', function () {
     assert.strictEqual(iniResult.b, 'abc');
     assert.strictEqual(utils.iniParse(), undefined);
     assert.strictEqual(utils.iniParse('error'), undefined);
+  
+    assert.strictEqual(utils.iniParse('a=1\n', true), undefined);
+
+    const iniResult2 = utils.iniParse('a=100\n', false);
+    assert.strictEqual(iniResult2.a, '100');
   });
 
   it('textParse', function () {

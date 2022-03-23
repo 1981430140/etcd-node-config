@@ -3,7 +3,7 @@ const { promisify } = require('util');
 const fs = require('fs');
 const assert = require('assert');
 const dotenv = require('dotenv');
-const { assignConfig } = require('./lib/utils');
+const { assignConfig, iniParse } = require('./lib/utils');
 const defualtPath = __dirname + '/etcd.env';
 
 /**
@@ -27,20 +27,20 @@ const fetchRemoteEtcdConfig = async clientOptions => {
   const configResult = {};
   try {
     const pathConfigs = clientOptions.paths.map(item => typeof item === 'string' ? { path: item } : item);
-    const pathTypeObj = pathConfigs.reduce((obj, item) => Object.assign(obj, { [item.path[0] === '/' ? item.path : `/${item.path}`]: item.type }), {})
+    const pathConfigObj = pathConfigs.reduce((obj, item) => Object.assign(obj, { [item.path[0] === '/' ? item.path : `/${item.path}`]: item }), {})
     const etcd = new Etcd(clientOptions.hosts, clientOptions.options);
     const configDataResult = await Promise.all(pathConfigs.map(config => (promisify(etcd.get).call(etcd, config.path, config.options || {}))));
     configDataResult.forEach(data => {
       if (data.node.dir === true) {
         for (const node of data.node.nodes) {
           if (!node.dir) {
-            assignConfig(configResult, node, pathTypeObj[data.node.key])
+            assignConfig(configResult, node, pathConfigObj[data.node.key])
           } else {
             console.warn('warning： 忽略目录key:', node ? node.key : node)
           }
         }
       } else {
-        assignConfig(configResult, data.node, pathTypeObj[data.node.key])
+        assignConfig(configResult, data.node, pathConfigObj[data.node.key])
       }
     });
   } catch (error) {
@@ -89,7 +89,7 @@ const setEnv = () => {
 const getEnv = (filePath, isDelEtcdPrefix) => {
   if (!filePath) filePath = defualtPath;
   try {
-    const env = dotenv.parse(fs.readFileSync(filePath, { encoding: 'utf8' }));
+    const env = iniParse(fs.readFileSync(filePath, { encoding: 'utf8' }), false);
     return Object.keys(env).reduce((envObj, key) => {
       let val = env[key];
       try { val = JSON.parse(val); } catch { }
