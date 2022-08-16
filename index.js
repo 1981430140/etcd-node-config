@@ -3,7 +3,8 @@ const { promisify } = require('util');
 const fs = require('fs');
 const assert = require('assert');
 const dotenv = require('dotenv');
-const { assignConfig, iniParse } = require('./lib/utils');
+const { assignConfig, iniParse, createConfigFile, requireConfigJson } = require('./lib/utils');
+const EtcdWatcher = require('./lib/watcher');
 const defualtPath = __dirname + '/etcd.env';
 
 /**
@@ -47,11 +48,26 @@ const fetchRemoteEtcdConfig = async clientOptions => {
     assert(false, JSON.stringify(error));
   }
 
+  // 写入配置到config.json 中
+  createConfigFile(clientOptions)
+
   // 写入到 etcd.env 文件中
   createEnvFile(configResult);
   return configResult;
 }
 
+/**
+ * 监听
+ */
+const watcher = () => {
+  const clientOptions = requireConfigJson();
+  if (clientOptions) {
+    return new EtcdWatcher(clientOptions);
+  } else {
+    console.error(`[ERROR] - [etcd-node-config] 没有需要监听的配置数据!`);
+    return null;
+  }
+}
 
 /**
  * 生成 etcd.env
@@ -106,5 +122,6 @@ module.exports = {
   fetchRemoteEtcdConfig,
   createEnvFile,
   setEnv,
-  getEnv
+  getEnv,
+  watcher
 };
