@@ -2,7 +2,20 @@
 
 ```bash
 $ npm i etcd-node-config --save
+
+// etcd 版本为 v2 使用 1.x 版本
+npm i etcd-node-config@1.x --save
+
+// etcd 版本为 v3 使用 2.x 版本
+npm i etcd-node-config@2.x --save
 ```
+
+## 版本选择
+Node.js SDK \ ETCD Server  |  v2   |  v3   |
+---                        |  ---  |  ---  |
+1.x                        |   √   |       |
+2.x                        |       |   √   |
+
 
 ## 获取 ETCD 配置数据使用方式
 

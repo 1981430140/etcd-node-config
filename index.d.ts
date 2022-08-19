@@ -1,8 +1,9 @@
+import { IOptions } from "etcd3";
 import EtcdWatcher, { EventEmitter } from "./lib/watcher";
 
 export interface ClientOptions {
     hosts: string | string[]; // etcd 连接地址
-    etcdOptions?: any;
+    etcdOptions?: IOptions;
     paths: string[] | PathOptions[] // 配置数据的paths
 }
 
@@ -10,7 +11,6 @@ interface PathOptions {
     path: string, // etcd 配置信息 path
     type?: 'json' | 'yaml' | 'ini' | 'text', // 配置数据的类型
     name?: string, // 名称， 返回结果会将配置数据放在 name 中
-    options?: any,
     watcher?: boolean
 }
 

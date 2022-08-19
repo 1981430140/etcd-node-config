@@ -1,5 +1,4 @@
-const Etcd = require('node-etcd');
-const { promisify } = require('util');
+const { Etcd3 } = require('etcd3');
 const fs = require('fs');
 const assert = require('assert');
 const dotenv = require('dotenv');
@@ -29,20 +28,16 @@ const fetchRemoteEtcdConfig = async clientOptions => {
   try {
     const pathConfigs = clientOptions.paths.map(item => typeof item === 'string' ? { path: item } : item);
     const pathConfigObj = pathConfigs.reduce((obj, item) => Object.assign(obj, { [item.path[0] === '/' ? item.path : `/${item.path}`]: item }), {})
-    const etcd = new Etcd(clientOptions.hosts, clientOptions.options);
-    const configDataResult = await Promise.all(pathConfigs.map(config => (promisify(etcd.get).call(etcd, config.path, config.options || {}))));
-    configDataResult.forEach(data => {
-      if (data.node.dir === true) {
-        for (const node of data.node.nodes) {
-          if (!node.dir) {
-            assignConfig(configResult, node, pathConfigObj[data.node.key])
-          } else {
-            console.warn('warning： 忽略目录key:', node ? node.key : node)
-          }
-        }
-      } else {
-        assignConfig(configResult, data.node, pathConfigObj[data.node.key])
-      }
+    const etcd = new Etcd3({
+      hosts: clientOptions.hosts,
+      ...clientOptions.options
+    });
+    const configDataResult = await Promise.all(pathConfigs.map(async config => {
+      const value = await etcd.get(config.path).string();
+      return { key: config.path, value }
+    }));
+    configDataResult.forEach(node => {
+      assignConfig(configResult, node, pathConfigObj[node.key])
     });
   } catch (error) {
     assert(false, JSON.stringify(error));
