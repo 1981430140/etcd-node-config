@@ -1,6 +1,6 @@
 {
   "name": "etcd-node-config",
-  "version": "1.0.3",
+  "version": "2.0.1",
   "description": "获取 etcd 配置中心信息注册到环境变量中, v1.x 支持etcd v2 版本, v2.x 支持etcd v3 版本",
   "author": "dq",
   "main": "index.js",

@@ -23,6 +23,24 @@ describe('lib/utils.js', function () {
     assert.strictEqual(utils.assignConfig({}, { value: '1' }), undefined);
   });
 
+  it('autoParse', function () {
+    const autoParseJson01 = utils.autoParse({ key: '/json', value: '{"json":1}' });
+    const autoParseJson02 = utils.autoParse({ key: '/json', value: '{"json":1}' }, 'autoJson');
+    const autoParseYaml01 = utils.autoParse({ key: '/yaml', value: 'yaml: 2\nyaml2: y2' })
+    const autoParseYaml02 = utils.autoParse({ key: '/yaml', value: 'yaml: 2\nyaml2: y2' }, 'autoYaml')
+    const autoParseIni01 = utils.autoParse({ key: '/ini', value: 'ini=3\nini2 = n3' })
+    const autoParseIni02 = utils.autoParse({ key: '/ini', value: 'ini=3\nini2 = n3' }, 'autoIni')
+
+    assert.strictEqual(autoParseJson01.json, 1);
+    assert.strictEqual(autoParseJson02.autoJson.json, 1);
+    assert.strictEqual(autoParseYaml01.yaml2, 'y2');
+    assert.strictEqual(autoParseYaml02.autoYaml.yaml, 2);
+    assert.strictEqual(autoParseIni01.ini, '3');
+    assert.strictEqual(autoParseIni02.autoIni.ini2, 'n3');
+
+  });
+
+
   it('typeParse', function () {
     assert.strictEqual(utils.typeParse({ key: '/json', value: '{"json":1}' }, 'json').json, 1);
     assert.strictEqual(utils.typeParse({ key: '/yaml', value: 'yaml: 2\nyaml2: y2' }, 'yaml').yaml, 2);
@@ -31,6 +49,8 @@ describe('lib/utils.js', function () {
 
     assert.strictEqual(utils.typeParse({ key: '/json', value: 'is undefined' }, 'json'), undefined);
     assert.strictEqual(utils.typeParse(), undefined);
+
+    assert.strictEqual(utils.typeParse({ key: '/json', value: '{"json": "init"}' }, 'json', 'alias').alias.json, 'init');
   });
 
 
@@ -58,7 +78,7 @@ describe('lib/utils.js', function () {
     assert.strictEqual(iniResult.b, 'abc');
     assert.strictEqual(utils.iniParse(), undefined);
     assert.strictEqual(utils.iniParse('error'), undefined);
-  
+
     assert.strictEqual(utils.iniParse('a=1\n', true), undefined);
 
     const iniResult2 = utils.iniParse('a=100\n', false);
@@ -72,6 +92,7 @@ describe('lib/utils.js', function () {
     assert.strictEqual(utils.textParse(), undefined);
     assert.strictEqual(utils.textParse({ value: 'test1' }), undefined);
     assert.strictEqual(utils.textParse({ key: '/test/key' }), undefined);
+    assert.strictEqual(utils.textParse({ key: '/test/key', value: 'init' }, 'text')['text'], 'init');
   });
 
 });
