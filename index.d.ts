@@ -26,7 +26,7 @@ export function fetchRemoteEtcdConfig(clientOptions: ClientOptions): Promise<any
  * @param {*} config etcd 配置数据
  * @param {*} filePath 需要将配置数据写入进的文件地址
  */
-export function createEnvFile(config: { [key]: any }, filePath?: string): void;
+export function createEnvFile(config: { [key: string]: any }, filePath?: string): void;
 
 /**
  * 注入到环境变量
@@ -41,6 +41,6 @@ export function setEnv(): void;
  */
 export function getEnv(filePath?: string, isDelEtcdPrefix?: Boolean): any;
 
-declare class EtcdWatcher extends EventEmitter {}
+declare class EtcdWatcher extends EventEmitter { }
 
 export function watcher(): EtcdWatcher | null;
