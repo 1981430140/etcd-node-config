@@ -40,7 +40,7 @@ const fetchRemoteEtcdConfig = async clientOptions => {
       assignConfig(configResult, node, pathConfigObj[node.key])
     });
   } catch (error) {
-    assert(false, JSON.stringify(error));
+    assert(false, JSON.stringify(error, Object.getOwnPropertyNames(error)));
   }
 
   // 写入配置到config.json 中
